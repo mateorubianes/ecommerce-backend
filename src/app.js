@@ -1,42 +1,21 @@
+//Importaciones
 import express from 'express'
-import { ProductManager } from './config/ProductManager.js';
-import { Product } from './config/Product.js';
+import productsRouter from './routes/productsRouter.js'
+import { __dirname } from './path.js'
 
-const productManager = new ProductManager('./data/products.json');
-const PORT = 8000
+//COnfiguraciones
 const app = express()
+const PORT = 8080
 
+//Middlewares
+app.use(express.json())
+app.use('/static', express.static(__dirname + 'public'))
 
+//Routes
+app.use('/api/products', productsRouter)
+app.use('/api/cart', cartRouter)
 
-
-// res.status(400).send('Enter a valid value for queries');
-
-// res.status(400).send('Enter a valid number for queries');
-
-app.get('/products', async(req, res) => {
-    try {
-        const {limit} = req.query;
-        const intLimit = parseInt(limit)
-        const prods = await productManager.getProducts()
-        if (!intLimit)
-            intLimit = prods.length
-        const prodsLimit = prods.slice(0, intLimit)
-        res.status(200).send(prodsLimit)
-    } catch(e) {
-        res.status(500).send('There was an error while getting the products: ' + e);
-    }
-})
-
-app.get('/products/:id', async(req, res) => {
-    try{
-        const productId = req.params.id
-        res.status(200).send(await productManager.getProductById(productId))
-    } catch(e) {
-        res.status(500).send('There was an error while getting the product: ', e)
-    }
-})
-
+//Server
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`URL ===> http://localhost:${PORT}`);
+    console.log(`Server listening on port ${PORT} - - - - URL: http://localhost:${PORT}`)
 })
