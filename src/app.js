@@ -1,19 +1,25 @@
-//Importaciones
+//Imports
 import express from 'express'
-import productsRouter from './routes/productsRouter.js'
+import mongoose from 'mongoose'
+import indexRouter from './routes/indexRouter.js'
 import { __dirname } from './path.js'
 
-//COnfiguraciones
+//Configs
 const app = express()
 const PORT = 8080
+
+//Database connection
+mongoose.connect('mongodb+srv://materub2003:<password>@coderhouse.hxi7mp1.mongodb.net/?retryWrites=true&w=majority&appName=coderhouse')
+.then(() => console.log('DB connected'))
+.catch(e => console.log(e))
+
 
 //Middlewares
 app.use(express.json())
 app.use('/static', express.static(__dirname + 'public'))
 
 //Routes
-app.use('/api/products', productsRouter)
-app.use('/api/cart', cartRouter)
+app.use('/', indexRouter)
 
 //Server
 app.listen(PORT, () => {
