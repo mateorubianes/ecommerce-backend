@@ -7,7 +7,6 @@ import cookieParser from 'cookie-parser'
 import messageModel from './models/messages.js'
 import indexRouter from './routes/indexRouter.js'
 import { Server } from 'socket.io'
-import { engine } from 'express-handlebars'
 import { __dirname } from './path.js'
 
 //Configs
@@ -52,7 +51,36 @@ app.get('/deleteCookie', (req, res) => {
     //res.cookie('CookieCokie', '', { expires: new Date(0) })
 })
 
-//
+//Socket io
+io.on('connection', (socket) => {
+    console.log("Conexion con Socket.io")
+
+    socket.on('mensaje', async (mensaje) => {
+        try {
+            await messageModel.create(mensaje)
+            const mensajes = await messageModel.find()
+            io.emit('mensajeLogs', mensajes)
+        } catch (e) {
+            io.emit('mensajeLogs', e)
+        }
+
+    })
+
+})
+
+//Login
+app.post('/login', (req, res) => {
+    const { email, password } = req.body
+
+    if (email == "admin@admin.com" && password == "1234") {
+        req.session.email = email
+        req.session.password = password
+
+
+    }
+    console.log(req.session)
+    res.send("Login")
+})
 
 //Server
 app.listen(PORT, () => {
