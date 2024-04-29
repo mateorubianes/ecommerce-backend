@@ -8,14 +8,14 @@ import messageModel from './models/messages.js'
 import indexRouter from './routes/indexRouter.js'
 import { Server } from 'socket.io'
 import { __dirname } from './path.js'
-
+import environment from './config/environment.js'
 //Configs
 const app = express()
-const PORT = 8080
+const PORT = environment.port
 const io = new Server(server)
 
 //Database connection
-mongoose.connect('mongodb+srv://materub2003:<password>@coderhouse.hxi7mp1.mongodb.net/?retryWrites=true&w=majority&appName=coderhouse')
+mongoose.connect(environment.mongoDbUrl)
 .then(() => console.log('DB connected'))
 .catch(e => console.log(e))
 
